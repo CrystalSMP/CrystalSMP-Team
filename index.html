@@ -1,0 +1,748 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>CrystalSMP Team</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2 28 9v14L16 30 4 23V9z' fill='%23ec4899'/%3E%3Cpath d='M16 8l6 4v8l-6 4-6-4v-8z' fill='%23f9a8d4'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0910; --side: #0e0c16; --card: #14111e; --card-2: #1b1727; --line: #262035;
+    --fg: #f1eef8; --muted: #9289a8; --accent: #ec4899; --accent-2: #f472b6; --violet: #8b5cf6;
+    --green: #22c55e; --yellow: #eab308; --red: #ef4444; --blue: #3b82f6;
+    --grad: linear-gradient(120deg, #ec4899, #8b5cf6);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body { background: var(--bg); color: var(--fg); font: 14px/1.5 "Inter", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  [hidden] { display: none !important; }
+  .i { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+  .muted { color: var(--muted); }
+
+  /* Login */
+  .login { min-height: 100vh; display: grid; place-items: center; padding: 24px 16px;
+    background: radial-gradient(600px 400px at 15% 10%, rgba(236,72,153,.18), transparent 60%), radial-gradient(600px 400px at 90% 90%, rgba(139,92,246,.16), transparent 60%), var(--bg); }
+  .login-card { width: 100%; max-width: 410px; background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 32px 28px; box-shadow: 0 30px 80px rgba(0,0,0,.55); }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; }
+  .logo svg { width: 30px; height: 30px; }
+  .logo span { color: var(--accent-2); }
+  .login-card h1 { font-size: 23px; margin: 24px 0 6px; }
+  .login-card p { color: var(--muted); margin: 0 0 20px; }
+  .lbl { display: block; font-size: 11.5px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 6px; }
+  input, select, textarea { width: 100%; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(236,72,153,.22); }
+  .check { display: flex; gap: 8px; align-items: center; margin: 14px 0 18px; color: var(--muted); font-size: 13px; }
+  .check input { width: auto; }
+  .err { color: var(--red); font-size: 13px; min-height: 20px; margin-top: 10px; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; border: 1px solid var(--line); background: var(--card-2); border-radius: 10px; padding: 9px 14px; font-weight: 600; transition: filter .15s, border-color .15s; white-space: nowrap; }
+  .btn:hover:not(:disabled) { border-color: #3a3150; filter: brightness(1.1); }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .btn-primary { background: var(--grad); border-color: transparent; color: #fff; }
+  .btn-danger { background: rgba(239,68,68,.12); color: #fca5a5; border-color: rgba(239,68,68,.35); }
+  .btn-warn { background: rgba(234,179,8,.1); color: #fde68a; border-color: rgba(234,179,8,.3); }
+  .w100 { width: 100%; }
+
+  /* Layout */
+  .app { display: grid; grid-template-columns: 236px 1fr; min-height: 100vh; }
+  aside { background: var(--side); border-right: 1px solid var(--line); padding: 20px 14px; display: flex; flex-direction: column; gap: 18px; position: sticky; top: 0; height: 100vh; }
+  .srv { display: flex; gap: 10px; align-items: center; padding: 10px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+  .srv .ic { width: 34px; height: 34px; border-radius: 9px; background: var(--grad); display: grid; place-items: center; font-weight: 800; }
+  .srv b { display: block; font-size: 13.5px; } .srv small { color: var(--muted); font-size: 11.5px; display: flex; align-items: center; gap: 6px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); display: inline-block; }
+  .nav { display: flex; flex-direction: column; gap: 2px; }
+  .nav-title { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; padding: 0 10px 6px; }
+  .nav button { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 9px; color: var(--muted); font-weight: 500; background: none; border: 0; text-align: left; }
+  .nav button:hover { background: var(--card); color: var(--fg); }
+  .nav button.on { background: rgba(236,72,153,.13); color: #fff; }
+  .nav button.on .i { color: var(--accent-2); }
+  .nav .badge-n { margin-left: auto; font-size: 11px; font-weight: 800; background: var(--accent); color: #fff; border-radius: 999px; padding: 0 7px; }
+  .me { margin-top: auto; display: flex; gap: 10px; align-items: center; padding: 10px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+  .me .av { width: 32px; height: 32px; border-radius: 8px; background: var(--grad); display: grid; place-items: center; font-weight: 700; }
+  .me b { display: block; font-size: 13px; } .me small { color: var(--muted); font-size: 11px; }
+  .me button { margin-left: auto; background: none; border: 0; color: var(--muted); padding: 6px; border-radius: 6px; }
+  .me button:hover { color: var(--red); background: rgba(239,68,68,.1); }
+
+  main { min-width: 0; padding: 24px 28px 40px; }
+  .head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+  .head h2 { margin: 0; font-size: 23px; }
+  .head .sub { color: var(--muted); }
+  .menu-btn { display: none; background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 7px; }
+  .view { display: flex; flex-direction: column; gap: 14px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; }
+  .card-h { display: flex; align-items: center; gap: 10px; padding: 13px 16px; border-bottom: 1px solid var(--line); font-weight: 600; }
+  .card-h .sub { color: var(--muted); font-weight: 500; margin-left: auto; font-size: 12.5px; }
+  .pad { padding: 16px; }
+  .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .stat { padding: 15px 16px; }
+  .stat .k { color: var(--muted); font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; }
+  .stat .v { font-size: 25px; font-weight: 800; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .stat .v small { font-size: 13px; color: var(--muted); font-weight: 500; }
+  .two { display: grid; grid-template-columns: 1.4fr 1fr; gap: 14px; align-items: start; }
+
+  .plist { display: flex; flex-direction: column; }
+  .prow { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-bottom: 1px solid var(--line); }
+  .prow:last-child { border-bottom: 0; }
+  .prow img { width: 34px; height: 34px; border-radius: 7px; image-rendering: pixelated; }
+  .prow .n { flex: 1; min-width: 0; }
+  .prow .n b { display: block; } .prow .n small { color: var(--muted); font-size: 12px; }
+  .rank { font-size: 11px; font-weight: 800; padding: 1px 8px; border-radius: 999px; background: rgba(0,0,0,.35); }
+  .acts { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+  .ib { background: transparent; border: 1px solid var(--line); color: var(--muted); border-radius: 8px; padding: 5px 9px; font-size: 12px; font-weight: 600; display: inline-flex; gap: 5px; align-items: center; }
+  .ib:hover { color: var(--fg); border-color: #3a3150; }
+  .ib.red:hover { color: #fca5a5; border-color: rgba(239,68,68,.45); }
+  .empty { color: var(--muted); padding: 22px 16px; text-align: center; }
+
+  .feed { max-height: 520px; overflow-y: auto; padding: 6px 0; scrollbar-width: thin; scrollbar-color: #2e2840 transparent; }
+  .msg { display: flex; gap: 10px; padding: 6px 16px; font-size: 13.5px; }
+  .msg time { color: var(--muted); font-variant-numeric: tabular-nums; flex: none; font-size: 12px; padding-top: 1px; }
+  .msg .txt { flex: 1; word-break: break-word; }
+  .msg.team .txt { color: var(--accent-2); }
+  .msg.alert .txt { color: #fca5a5; }
+  .msg.warn .txt { color: #fde68a; }
+  .send { display: flex; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--line); }
+
+  .form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form .full { grid-column: 1 / -1; }
+  .seg { display: flex; flex-wrap: wrap; gap: 6px; }
+  .seg button { background: var(--bg); border: 1px solid var(--line); border-radius: 9px; padding: 8px 12px; font-weight: 600; color: var(--muted); }
+  .seg button.on { background: rgba(236,72,153,.15); border-color: rgba(236,72,153,.5); color: #fff; }
+  .seg button:disabled { opacity: .35; cursor: not-allowed; }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: 11.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; padding: 10px 16px; border-bottom: 1px solid var(--line); font-weight: 700; }
+  td { padding: 10px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: 0; }
+  .typ { font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+  .typ.BAN, .typ.TEMP_BAN, .typ.IP_BAN { background: rgba(239,68,68,.15); color: #fca5a5; }
+  .typ.MUTE, .typ.TEMP_MUTE { background: rgba(234,179,8,.14); color: #fde68a; }
+  .typ.WARNING, .typ.TEMP_WARNING { background: rgba(59,130,246,.15); color: #93c5fd; }
+  .typ.KICK { background: rgba(139,92,246,.16); color: #c4b5fd; }
+  .act-tag { font-size: 10.5px; font-weight: 800; color: var(--green); margin-left: 6px; }
+  .note { padding: 12px 16px; border-bottom: 1px solid var(--line); }
+  .note:last-child { border-bottom: 0; }
+  .note .h { display: flex; gap: 8px; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .note .h b { color: var(--accent-2); }
+  .term { background: #07060b; font: 12px/1.55 "JetBrains Mono", ui-monospace, monospace; color: #c9c3d9; padding: 12px 14px; height: 520px; overflow-y: auto; white-space: pre-wrap; word-break: break-word; border-radius: 0 0 14px 14px; }
+  .term .w { color: #facc15; } .term .e { color: #f87171; }
+
+  .perm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; }
+  .perm { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); font-size: 13px; cursor: pointer; user-select: none; }
+  .perm input { width: 16px; height: 16px; accent-color: var(--accent); }
+  .perm:has(input:checked) { border-color: rgba(236,72,153,.5); background: rgba(236,72,153,.08); }
+  .ptags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+  .ptag { font-size: 10.5px; font-weight: 600; padding: 1px 7px; border-radius: 999px; background: var(--card-2); border: 1px solid var(--line); color: var(--muted); }
+  .presets { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  .presets button { font-size: 12px; padding: 4px 10px; border-radius: 999px; background: var(--bg); border: 1px solid var(--line); color: var(--muted); }
+  .presets button:hover { color: var(--fg); }
+  .lock-note { display: flex; gap: 10px; align-items: center; padding: 12px 14px; border-radius: 12px; background: rgba(139,92,246,.08); border: 1px solid rgba(139,92,246,.3); color: #ddd6fe; font-size: 13px; }
+
+  .akte-head { display: flex; gap: 18px; align-items: center; padding: 18px; flex-wrap: wrap; }
+  .akte-head img { width: 96px; height: 150px; object-fit: contain; filter: drop-shadow(0 8px 14px rgba(236,72,153,.3)); }
+  .akte-head h3 { margin: 0; font-size: 24px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .pill { font-size: 11px; font-weight: 800; padding: 2px 9px; border-radius: 999px; }
+  .pill.on { background: rgba(34,197,94,.15); color: var(--green); } .pill.off { background: var(--card-2); color: var(--muted); }
+  .pill.bad { background: rgba(239,68,68,.15); color: #fca5a5; }
+  .kv { display: grid; grid-template-columns: repeat(4, minmax(110px, 1fr)); gap: 8px; margin-top: 10px; }
+  .kv div { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
+  .kv b { display: block; font-size: 17px; } .kv span { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; font-weight: 700; }
+  .staff { display: flex; flex-wrap: wrap; gap: 6px; }
+  .staff span { display: inline-flex; gap: 6px; align-items: center; font-size: 12.5px; padding: 4px 9px; border-radius: 999px; background: var(--card-2); border: 1px solid var(--line); }
+  .staff i { width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+  .tcmsg { display: flex; gap: 10px; padding: 7px 16px; }
+  .tcmsg .av { width: 30px; height: 30px; border-radius: 8px; background: var(--grad); display: grid; place-items: center; font-weight: 800; font-size: 13px; flex: none; }
+  .tcmsg .h { font-size: 12px; color: var(--muted); } .tcmsg .h b { color: var(--fg); margin-right: 6px; }
+  .tcmsg.mine .av { background: var(--card-2); border: 1px solid var(--accent); }
+  .seg button.cat { font-size: 12.5px; }
+  @media (max-width: 760px) { .kv { grid-template-columns: repeat(2, 1fr); } }
+  .modal { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; padding: 16px; background: rgba(5,4,10,.7); backdrop-filter: blur(4px); }
+  .modal-box { width: 100%; max-width: 480px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 30px 80px rgba(0,0,0,.6); }
+  .modal-f { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--line); }
+  .codeval { font: 600 18px/1.4 "JetBrains Mono", monospace; text-align: center; background: var(--bg); border: 1px dashed var(--accent); border-radius: 10px; padding: 14px; user-select: all; word-break: break-all; }
+  .toast { position: fixed; right: 20px; bottom: 20px; z-index: 80; background: var(--card-2); border: 1px solid var(--line); border-left: 3px solid var(--accent); padding: 12px 16px; border-radius: 10px; box-shadow: 0 14px 40px rgba(0,0,0,.5); transform: translateY(150%); transition: transform .3s; max-width: calc(100% - 40px); }
+  .toast.show { transform: none; } .toast.bad { border-left-color: var(--red); }
+
+  @media (max-width: 1100px) { .grid4 { grid-template-columns: repeat(2, 1fr); } .two { grid-template-columns: 1fr; } }
+  @media (max-width: 760px) {
+    .app { grid-template-columns: 1fr; }
+    aside { position: fixed; inset: 0 auto 0 0; width: 250px; z-index: 50; transform: translateX(-100%); transition: transform .25s; }
+    aside.open { transform: none; box-shadow: 0 0 60px rgba(0,0,0,.6); }
+    .menu-btn { display: block; }
+    main { padding: 16px 14px 30px; }
+    .form { grid-template-columns: 1fr; }
+    .prow { flex-wrap: wrap; } .acts { width: 100%; justify-content: flex-start; }
+    .hide-m { display: none; }
+    th, td { padding: 9px 10px; }
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="logo" viewBox="0 0 32 32"><path d="M16 2 28 9v14L16 30 4 23V9z" fill="#ec4899"/><path d="M16 8l6 4v8l-6 4-6-4v-8z" fill="#f9a8d4"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z"/></symbol>
+  <symbol id="i-hammer" viewBox="0 0 24 24"><path d="m15 12-8.5 8.5a2.1 2.1 0 0 1-3-3L12 9M17.6 15 22 10.6M20 12.6 11.4 4a2 2 0 0 0-2.8 0L7 5.6 18.4 17l1.6-1.6a2 2 0 0 0 0-2.8z"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+  <symbol id="i-note" viewBox="0 0 24 24"><path d="M4 4h12l4 4v12H4z"/><path d="M8 12h8M8 16h5"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0"/></symbol>
+  <symbol id="i-mega" viewBox="0 0 24 24"><path d="m3 11 18-5v12L3 14zM11.6 16.8a3 3 0 1 1-5.8-1.6"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m10.8 12.2 8.2-8.2M17 6l3 3M15 8l2 2"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-out" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l-5-5 5-5M5 12h11"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M5 7l1 13h12l1-13M9 7V4h6v3"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M17 4a4 4 0 0 1 0 8M22 21a7 7 0 0 0-4-6.3"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></symbol>
+</svg>
+
+<!-- Login -->
+<section class="login" id="loginView">
+  <form class="login-card" id="loginForm" autocomplete="off">
+    <div class="logo"><svg><use href="#logo"/></svg><div>CrystalSMP <span>Team</span></div></div>
+    <h1>Team-Bereich</h1>
+    <p>Nur für das CrystalSMP-Team. Melde dich mit deinem persönlichen Team-Key an.</p>
+    <label class="lbl" for="keyInput">Team-Key</label>
+    <input id="keyInput" type="password" placeholder="TEAM-XXXXXX-…" required>
+    <label class="check"><input type="checkbox" id="remember" checked> Angemeldet bleiben</label>
+    <button class="btn btn-primary w100" id="loginBtn" type="submit">Anmelden</button>
+    <div class="err" id="loginErr"></div>
+  </form>
+</section>
+
+<!-- App -->
+<div class="app" id="appView" hidden>
+  <aside id="sidebar">
+    <div class="logo"><svg><use href="#logo"/></svg><div>CrystalSMP <span>Team</span></div></div>
+    <div class="srv"><div class="ic">C</div><div><b>CrystalSMP</b><small><span class="dot" id="srvDot"></span><span id="srvText">verbinde…</span></small></div></div>
+    <nav class="nav" id="nav">
+      <div class="nav-title">Team</div>
+      <button data-view="overview" class="on"><svg class="i"><use href="#i-grid"/></svg>Übersicht</button>
+      <button data-view="chat" data-perm="chat"><svg class="i"><use href="#i-chat"/></svg>Live-Chat</button>
+      <button data-view="lookup" data-perm="lookup"><svg class="i"><use href="#i-user"/></svg>Spieler-Akte</button>
+      <button data-view="teamchat" data-perm="teamchat"><svg class="i"><use href="#i-users"/></svg>Team-Chat<span class="badge-n" id="tcBadge" hidden>0</span></button>
+      <button data-view="mod" data-perm="kick|mute|ban"><svg class="i"><use href="#i-hammer"/></svg>Moderation</button>
+      <button data-view="history" data-perm="history"><svg class="i"><use href="#i-list"/></svg>Strafen</button>
+      <button data-view="notes" data-perm="notes"><svg class="i"><use href="#i-note"/></svg>Notizen</button>
+      <button data-view="alerts" data-perm="alerts"><svg class="i"><use href="#i-bell"/></svg>Meldungen<span class="badge-n" id="alertBadge" hidden>0</span></button>
+      <button data-view="announce" data-perm="announce"><svg class="i"><use href="#i-mega"/></svg>Ankündigung</button>
+      <button data-view="stats" data-perm="history"><svg class="i"><use href="#i-chart"/></svg>Statistik</button>
+      <button data-view="activity"><svg class="i"><use href="#i-clock"/></svg>Team-Log</button>
+      <button data-view="keys" data-perm="keys"><svg class="i"><use href="#i-key"/></svg>Keys</button>
+    </nav>
+    <div class="me"><div class="av" id="meAv">?</div><div><b id="meName">–</b><small id="meRank">–</small></div>
+      <button id="logout" type="button" title="Abmelden" aria-label="Abmelden"><svg class="i"><use href="#i-out"/></svg></button></div>
+  </aside>
+
+  <main>
+    <div class="head">
+      <button class="menu-btn" id="menuBtn" type="button" aria-label="Menü"><svg class="i"><use href="#i-menu"/></svg></button>
+      <h2 id="viewTitle">Übersicht</h2><span class="sub" id="viewSub"></span>
+    </div>
+
+    <!-- Übersicht -->
+    <div class="view" data-view="overview">
+      <div class="grid4">
+        <div class="card stat"><div class="k">Server</div><div class="v" id="oState">–</div></div>
+        <div class="card stat"><div class="k">Spieler online</div><div class="v" id="oPlayers">–</div></div>
+        <div class="card stat"><div class="k">TPS</div><div class="v" id="oTps">–</div></div>
+        <div class="card stat"><div class="k">Läuft seit</div><div class="v" id="oUptime">–</div></div>
+      </div>
+      <div class="lock-note"><svg class="i"><use href="#i-lock"/></svg>Starten, Stoppen und Neustarten des Servers ist im Team-Bereich nicht möglich – das macht nur der Owner.</div>
+      <div class="two">
+        <div class="card"><div class="card-h">Spieler online <span class="sub" id="oCount"></span></div><div class="plist" id="playerList"><div class="empty">Lade …</div></div></div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="card"><div class="card-h">Team online</div><div class="pad" id="staffBox" style="display:flex;flex-direction:column;gap:10px"><span class="muted">Lade …</span></div></div>
+          <div class="card"><div class="card-h">Zuletzt im Team</div><div class="feed" id="miniLog" style="max-height:300px"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat -->
+    <div class="view" data-view="chat" hidden>
+      <div class="card"><div class="card-h">Live-Chat <span class="sub">aktualisiert alle 3 Sekunden</span></div>
+        <div class="feed" id="chatFeed"><div class="empty">Noch keine Nachrichten.</div></div>
+        <form class="send" id="chatForm" autocomplete="off"><input id="chatInput" maxlength="200" placeholder="Als [Team] in den Chat schreiben …" aria-label="Nachricht"><button class="btn btn-primary" type="submit"><svg class="i"><use href="#i-send"/></svg>Senden</button></form>
+      </div>
+    </div>
+
+    <!-- Spieler-Akte -->
+    <div class="view" data-view="lookup" hidden>
+      <form class="card send" id="lookupForm" autocomplete="off" style="border-top:0"><input id="lookupInput" list="playerNames" maxlength="16" placeholder="Spielername eingeben …" aria-label="Spielername"><button class="btn btn-primary" type="submit"><svg class="i"><use href="#i-user"/></svg>Akte öffnen</button></form>
+      <div id="akte"><div class="card empty">Gib einen Spielernamen ein, um Profil, Strafen und Notizen zu sehen.</div></div>
+    </div>
+
+    <!-- Team-Chat -->
+    <div class="view" data-view="teamchat" hidden>
+      <div class="card"><div class="card-h">Team-Chat <span class="sub">nur für das Team – nicht im Spiel sichtbar</span></div>
+        <div class="feed" id="tcFeed"><div class="empty">Noch keine Nachrichten.</div></div>
+        <form class="send" id="tcForm" autocomplete="off"><input id="tcInput" maxlength="400" placeholder="Nachricht ans Team …" aria-label="Team-Nachricht"><button class="btn btn-primary" type="submit"><svg class="i"><use href="#i-send"/></svg>Senden</button></form>
+      </div>
+    </div>
+
+    <!-- Statistik -->
+    <div class="view" data-view="stats" hidden>
+      <div class="grid4">
+        <div class="card stat"><div class="k">Strafen heute</div><div class="v" id="stToday">–</div></div>
+        <div class="card stat"><div class="k">Strafen 7 Tage</div><div class="v" id="stWeek">–</div></div>
+        <div class="card stat"><div class="k">Aktivstes Teammitglied</div><div class="v" id="stTop" style="font-size:19px">–</div></div>
+        <div class="card stat"><div class="k">Strafen gesamt</div><div class="v" id="stTotal">–</div></div>
+      </div>
+      <div class="card"><div class="card-h">Team-Rangliste <span class="sub">nach Strafen</span></div>
+        <div style="overflow-x:auto"><table><thead><tr><th>#</th><th>Teammitglied</th><th>Gesamt</th><th>7 Tage</th><th class="hide-m">Banns</th><th class="hide-m">Mutes</th><th class="hide-m">Warns</th></tr></thead><tbody id="statRows"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- Moderation -->
+    <div class="view" data-view="mod" hidden>
+      <div class="card"><div class="card-h">Spieler bestrafen</div>
+        <form class="pad form" id="modForm" autocomplete="off">
+          <div class="full"><label class="lbl">Strafenkatalog (1 Klick)</label><div class="seg" id="catalog"></div></div>
+          <div class="full"><label class="lbl">Aktion</label><div class="seg" id="modActions"></div></div>
+          <div><label class="lbl" for="modPlayer">Spieler</label><input id="modPlayer" list="playerNames" maxlength="16" placeholder="Spielername" required><datalist id="playerNames"></datalist></div>
+          <div id="durWrap"><label class="lbl" for="modDur">Dauer</label>
+            <select id="modDur"><option value="">Für immer</option><option value="30m">30 Minuten</option><option value="1h">1 Stunde</option><option value="6h">6 Stunden</option><option value="1d">1 Tag</option><option value="3d">3 Tage</option><option value="7d">7 Tage</option><option value="30d">30 Tage</option></select></div>
+          <div class="full" id="reasonWrap"><label class="lbl" for="modReason">Grund</label><input id="modReason" maxlength="90" placeholder="z. B. Beleidigung im Chat" list="reasons"><datalist id="reasons"><option value="Hacking / Cheat-Client"><option value="Beleidigung"><option value="Spam"><option value="Werbung"><option value="Griefing"><option value="Bug-Using"><option value="Unangemessener Name/Skin"></datalist></div>
+          <div class="full"><button class="btn btn-primary" id="modBtn" type="submit"><svg class="i"><use href="#i-hammer"/></svg><span id="modBtnText">Ausführen</span></button></div>
+        </form>
+      </div>
+      <p class="muted" style="margin:0 2px;font-size:12.5px">Alle Strafen laufen über AdvancedBan und werden mit deinem Namen im Team-Log gespeichert.</p>
+    </div>
+
+    <!-- Strafen -->
+    <div class="view" data-view="history" hidden>
+      <div class="card"><div class="card-h">Strafen-Verlauf <input id="histSearch" placeholder="Spieler suchen …" style="margin-left:auto;max-width:220px;padding:6px 10px"></div>
+        <div style="overflow-x:auto"><table><thead><tr><th>Spieler</th><th>Strafe</th><th class="hide-m">Grund</th><th class="hide-m">Von</th><th>Datum</th></tr></thead><tbody id="histRows"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- Notizen -->
+    <div class="view" data-view="notes" hidden>
+      <div class="card"><div class="card-h">Neue Notiz</div>
+        <form class="pad form" id="noteForm" autocomplete="off">
+          <div><label class="lbl" for="notePlayer">Spieler</label><input id="notePlayer" list="playerNames" maxlength="16" required></div>
+          <div class="full"><label class="lbl" for="noteText">Notiz (nur fürs Team sichtbar)</label><textarea id="noteText" rows="3" maxlength="500" required placeholder="z. B. Verdacht auf X-Ray, im Auge behalten"></textarea></div>
+          <div class="full"><button class="btn btn-primary" type="submit">Speichern</button></div>
+        </form>
+      </div>
+      <div class="card"><div class="card-h">Notizen <input id="noteSearch" placeholder="Spieler filtern …" style="margin-left:auto;max-width:220px;padding:6px 10px"></div><div id="noteList"><div class="empty">Lade …</div></div></div>
+    </div>
+
+    <!-- Meldungen -->
+    <div class="view" data-view="alerts" hidden>
+      <div class="two">
+        <div class="card"><div class="card-h">Anticheat &amp; Kicks <span class="sub">live</span></div><div class="feed" id="alertFeed"><div class="empty">Keine Meldungen.</div></div></div>
+        <div class="card"><div class="card-h">Konsole <span class="sub">nur lesen</span></div><div class="term" id="term"></div></div>
+      </div>
+    </div>
+
+    <!-- Ankündigung -->
+    <div class="view" data-view="announce" hidden>
+      <div class="card"><div class="card-h">Ankündigung an alle Spieler</div>
+        <form class="pad form" id="annForm">
+          <div class="full"><label class="lbl" for="annText">Text</label><textarea id="annText" rows="3" maxlength="200" required placeholder="z. B. Heute um 20 Uhr startet das Bau-Event!"></textarea></div>
+          <label class="check full" style="margin:0"><input type="checkbox" id="annTitle"> Zusätzlich groß auf dem Bildschirm anzeigen</label>
+          <div class="full"><button class="btn btn-primary" type="submit"><svg class="i"><use href="#i-mega"/></svg>Senden</button></div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Team-Log -->
+    <div class="view" data-view="activity" hidden>
+      <div class="card"><div class="card-h">Team-Log <span class="sub">wer hat was gemacht</span></div><div class="feed" id="actFeed" style="max-height:none"></div></div>
+    </div>
+
+    <!-- Keys -->
+    <div class="view" data-view="keys" hidden>
+      <div class="card"><div class="card-h">Neuen Team-Key erstellen <span class="sub">nur du als Owner</span></div>
+        <form class="pad form" id="keyForm" autocomplete="off">
+          <div><label class="lbl" for="keyName">Name</label><input id="keyName" maxlength="24" placeholder="Name des Teammitglieds" required></div>
+          <div><label class="lbl" for="keyRank">Rang</label><select id="keyRank"></select></div>
+          <div class="full"><label class="lbl">Was darf dieser Key?</label>
+            <div class="presets" id="presets"></div>
+            <div class="perm-grid" id="newPerms"></div></div>
+          <div class="full"><button class="btn btn-primary" type="submit"><svg class="i"><use href="#i-key"/></svg>Key erstellen</button></div>
+        </form>
+      </div>
+      <div class="card"><div class="card-h">Alle Keys</div>
+        <div style="overflow-x:auto"><table><thead><tr><th>Name</th><th>Rang &amp; Rechte</th><th class="hide-m">Letzter Login</th><th></th></tr></thead><tbody id="keyRows"></tbody></table></div>
+      </div>
+      <p class="muted" style="margin:0 2px;font-size:12.5px">Ein Key wird nur einmal angezeigt. Verlorene Keys einfach neu erzeugen – der alte wird dabei ungültig. Kein Key kann den Server starten oder stoppen.</p>
+    </div>
+  </main>
+</div>
+
+<!-- Modals -->
+<div class="modal" id="codeBox" hidden><div class="modal-box">
+  <div class="card-h"><svg class="i"><use href="#i-key"/></svg>Neuer Team-Key</div>
+  <div class="pad"><p class="muted" style="margin:0 0 12px">Key für <b id="codeFor"></b> – nur privat weitergeben. Er wird nicht noch einmal angezeigt.</p><div class="codeval" id="codeVal"></div></div>
+  <div class="modal-f"><button class="btn" id="codeCopy" type="button">Kopieren</button><button class="btn btn-primary" id="codeOk" type="button">Fertig</button></div>
+</div></div>
+<div class="modal" id="editBox" hidden><div class="modal-box">
+  <div class="card-h"><svg class="i"><use href="#i-key"/></svg>Rechte von <span id="editFor" style="margin-left:4px"></span></div>
+  <div class="pad"><label class="lbl" for="editRank">Rang</label><select id="editRank" style="margin-bottom:12px"></select><div class="perm-grid" id="editPerms"></div></div>
+  <div class="modal-f"><button class="btn" id="editCancel" type="button">Abbrechen</button><button class="btn btn-primary" id="editSave" type="button">Speichern</button></div>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const el = (t, c, txt) => { const e = document.createElement(t); if (c) e.className = c; if (txt != null) e.textContent = txt; return e; };
+  const icon = n => { const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); s.setAttribute('class', 'i'); const u = document.createElementNS('http://www.w3.org/2000/svg', 'use'); u.setAttribute('href', '#i-' + n); s.append(u); return s; };
+  const store = {
+    get(k) { try { return localStorage.getItem(k) || sessionStorage.getItem(k); } catch { return null; } },
+    set(k, v, keep) { try { (keep ? localStorage : sessionStorage).setItem(k, v); } catch {} },
+    clear(k) { try { localStorage.removeItem(k); sessionStorage.removeItem(k); } catch {} }
+  };
+  let API = '', token = store.get('ct_token'), me = null, perms = new Set(), view = 'overview', chatSince = 0, alertSince = 0, consolePos = 0, unseenAlerts = 0, players = [];
+  const can = p => p.split('|').some(x => perms.has(x));
+  function toast(msg, bad) { const t = $('toast'); t.textContent = msg; t.className = 'toast show' + (bad ? ' bad' : ''); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove('show'), 3800); }
+  const fmtT = t => new Date(t).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+  const fmtD = t => new Date(t).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
+  const fmtUp = s => { if (!s) return '–'; const d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60); return d ? `${d}T ${h}h` : h ? `${h}h ${m}m` : `${m}m`; };
+  const head = n => `https://mc-heads.net/avatar/${encodeURIComponent(n)}/64`;
+
+  // ---------- Verbindung ----------
+  async function discover() {
+    if (!location.hostname.endsWith('github.io') && await fetch('/api/ping', { cache: 'no-store' }).then(r => r.ok).catch(() => false)) { API = ''; return true; }
+    const sources = [`api.json?t=${Date.now()}`, `https://api.github.com/repos/CrystalSMP/CrystalSMP-Team/contents/api.json?t=${Date.now()}`];
+    for (const [i, url] of sources.entries()) {
+      try {
+        const r = await fetch(url, { cache: 'no-store' }); if (!r.ok) continue;
+        const d = await r.json(); const cfg = i ? JSON.parse(atob(d.content.replace(/\n/g, ''))) : d;
+        const api = (cfg.api || '').replace(/\/$/, ''); if (!api) continue;
+        if (await fetch(api + '/api/ping', { cache: 'no-store' }).then(r => r.ok).catch(() => false)) { API = api; return true; }
+      } catch {}
+    }
+    return false;
+  }
+  async function call(path, opts = {}) {
+    const r = await fetch(API + path, { ...opts, headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: 'Bearer ' + token } : {}) } });
+    if (r.status === 401) { logout(true); throw new Error('Bitte erneut anmelden'); }
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(d.error || 'Fehler ' + r.status);
+    return d;
+  }
+  const post = (p, b) => call(p, { method: 'POST', body: JSON.stringify(b || {}) });
+
+  // ---------- Login ----------
+  $('loginForm').addEventListener('submit', async e => {
+    e.preventDefault(); $('loginErr').textContent = ''; $('loginBtn').disabled = true;
+    try {
+      if (!API && !(await discover())) throw new Error('Team-Bereich gerade nicht erreichbar.');
+      const d = await post('/api/login', { key: $('keyInput').value.trim() });
+      token = d.token; store.set('ct_token', token, $('remember').checked); $('keyInput').value = '';
+      await start();
+    } catch (err) { $('loginErr').textContent = err.message; }
+    finally { $('loginBtn').disabled = false; }
+  });
+  function logout(expired) {
+    if (token && !expired) post('/api/logout').catch(() => {});
+    token = null; store.clear('ct_token'); $('appView').hidden = true; $('loginView').hidden = false;
+    if (expired) $('loginErr').textContent = 'Bitte erneut anmelden.';
+  }
+  $('logout').onclick = () => logout(false);
+
+  // ---------- Navigation ----------
+  const TITLES = { overview: ['Übersicht', ''], chat: ['Live-Chat', 'Mitlesen & als Team schreiben'], mod: ['Moderation', 'Kicken, verwarnen, muten, bannen'], history: ['Strafen', 'Alle Strafen aus AdvancedBan'], notes: ['Notizen', 'Infos zu Spielern – nur fürs Team'], alerts: ['Meldungen', 'Anticheat, Kicks & Konsole'], announce: ['Ankündigung', 'Nachricht an alle Spieler'], activity: ['Team-Log', ''], keys: ['Keys', 'Zugänge verwalten'], lookup: ['Spieler-Akte', 'Profil, Strafen & Notizen auf einen Blick'], teamchat: ['Team-Chat', 'Intern – Spieler sehen das nicht'], stats: ['Statistik', 'Wer im Team wie viel moderiert'] };
+  function go(v) {
+    const btn = document.querySelector(`#nav button[data-view="${v}"]`);
+    if (!btn || btn.hidden) v = 'overview';
+    view = v;
+    document.querySelectorAll('.view').forEach(x => x.hidden = x.dataset.view !== v);
+    document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.view === v));
+    $('viewTitle').textContent = TITLES[v][0]; $('viewSub').textContent = TITLES[v][1];
+    $('sidebar').classList.remove('open');
+    try { history.replaceState(null, '', '#' + v); } catch {}
+    if (v === 'history') loadHistory();
+    if (v === 'notes') loadNotes();
+    if (v === 'keys') loadKeys();
+    if (v === 'stats') loadStats();
+    if (v === 'teamchat') { tcUnseen = 0; $('tcBadge').hidden = true; const f = $('tcFeed'); f.scrollTop = f.scrollHeight; $('tcInput').focus(); }
+    if (v === 'alerts') { unseenAlerts = 0; $('alertBadge').hidden = true; }
+    if (v === 'chat') { const f = $('chatFeed'); f.scrollTop = f.scrollHeight; }
+  }
+  document.querySelectorAll('#nav button').forEach(b => b.onclick = () => go(b.dataset.view));
+  $('menuBtn').onclick = () => $('sidebar').classList.toggle('open');
+
+  // ---------- Übersicht ----------
+  function actionButtons(name) {
+    const acts = el('div', 'acts');
+    const add = (label, action, red) => { if (!can(action === 'kick' ? 'kick' : action === 'ban' ? 'ban' : 'mute')) return; const b = el('button', 'ib' + (red ? ' red' : ''), label); b.type = 'button'; b.onclick = () => { go('mod'); setAction(action); $('modPlayer').value = name; $('modReason').focus(); }; acts.append(b); };
+    add('Verwarnen', 'warn'); add('Muten', 'mute'); add('Kicken', 'kick', true); add('Bannen', 'ban', true);
+    if (can('lookup')) { const b = el('button', 'ib', 'Akte'); b.type = 'button'; b.onclick = () => openAkte(name); acts.append(b); }
+    if (can('notes')) { const b = el('button', 'ib', 'Notiz'); b.type = 'button'; b.onclick = () => { go('notes'); $('notePlayer').value = name; $('noteSearch').value = name; loadNotes(); $('noteText').focus(); }; acts.append(b); }
+    return acts;
+  }
+  async function loadOverview() {
+    try {
+      const d = await call('/api/overview');
+      $('srvDot').style.background = d.online ? 'var(--green)' : 'var(--red)'; $('srvText').textContent = d.online ? 'Online' : 'Offline';
+      $('oState').textContent = d.online ? 'Online' : 'Offline'; $('oState').style.color = d.online ? 'var(--green)' : 'var(--red)';
+      $('oPlayers').replaceChildren(String(d.count ?? '–')); if (d.max) $('oPlayers').append(el('small', null, ' / ' + d.max));
+      $('oTps').textContent = d.tps != null ? Number(d.tps).toFixed(1) : '–';
+      $('oUptime').textContent = fmtUp(d.uptime);
+      players = d.players || [];
+      $('oCount').textContent = players.length ? players.length + ' online' : '';
+      $('playerNames').replaceChildren(...players.map(p => { const o = el('option'); o.value = p.name; return o; }));
+      $('playerList').replaceChildren(...(players.length ? players.map(p => {
+        const r = el('div', 'prow'); const img = el('img'); img.src = head(p.bedrock ? 'MHF_Steve' : p.name); img.alt = '';
+        const n = el('div', 'n'); const b = el('b', null, p.name); const rk = el('span', 'rank', p.rank); rk.style.color = p.rankColor; b.append(' ', rk);
+        n.append(b, el('small', null, `${p.world} · ${p.ping} ms${p.bedrock ? ' · Bedrock' : ''}`));
+        r.append(img, n, actionButtons(p.name)); return r;
+      }) : [el('div', 'empty', d.online ? 'Gerade ist niemand online.' : 'Server ist offline.')]));
+      renderLog($('miniLog'), (d.activity || []).slice(0, 12));
+      const st = d.staff || { web: [], game: [] }, sb = $('staffBox'); sb.replaceChildren();
+      const row = (label, list, color) => { const w = el('div'); w.append(el('div', 'muted', label)); const s = el('div', 'staff'); s.style.marginTop = '6px';
+        if (!list.length) s.append(el('span', 'muted', 'niemand')); else list.forEach(x => { const c = el('span'); const dot = el('i'); if (color) dot.style.background = color; c.append(dot, x.name + (x.rank ? ' · ' + x.rank : '')); s.append(c); });
+        w.append(s); sb.append(w); };
+      row('Im Spiel', st.game); row('Auf dieser Seite', st.web, 'var(--accent)');
+      renderLog($('actFeed'), d.activity || []);
+    } catch {}
+  }
+  function renderLog(box, items) {
+    box.replaceChildren(...(items.length ? items.map(a => { const m = el('div', 'msg'); m.append(el('time', null, fmtD(a.t))); const t = el('span', 'txt'); const b = el('b', null, a.user); b.style.color = 'var(--accent-2)'; t.append(b, ' ' + a.action); m.append(t); return m; }) : [el('div', 'empty', 'Noch nichts passiert.')]));
+  }
+
+  // ---------- Chat ----------
+  function addFeed(box, events, cls) {
+    if (!events.length) return;
+    if (box.querySelector('.empty')) box.replaceChildren();
+    const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 60;
+    for (const e of events) { const m = el('div', 'msg ' + (typeof cls === 'function' ? cls(e) : cls)); m.append(el('time', null, fmtT(e.t)), el('span', 'txt', e.text)); box.append(m); }
+    while (box.children.length > 400) box.firstChild.remove();
+    if (atBottom) box.scrollTop = box.scrollHeight;
+  }
+  async function pollChat() {
+    if (!can('chat')) return;
+    try { const d = await call('/api/chat?since=' + chatSince); if (d.events.length) { chatSince = d.events[d.events.length - 1].id; addFeed($('chatFeed'), d.events, e => /\[Team\]/.test(e.text) ? 'team' : ''); } } catch {}
+  }
+  $('chatForm').addEventListener('submit', async e => {
+    e.preventDefault(); const msg = $('chatInput').value.trim(); if (!msg) return;
+    try { await post('/api/chat', { message: msg }); $('chatInput').value = ''; addFeed($('chatFeed'), [{ t: Date.now(), text: `[Team] ${me.name}: ${msg}` }], 'team'); } catch (err) { toast(err.message, true); }
+  });
+
+  // ---------- Meldungen ----------
+  async function pollAlerts() {
+    if (!can('alerts')) return;
+    try {
+      const d = await call('/api/alerts?since=' + alertSince);
+      if (d.events.length) {
+        if (alertSince && view !== 'alerts') { unseenAlerts += d.events.length; $('alertBadge').textContent = unseenAlerts; $('alertBadge').hidden = false; }
+        alertSince = d.events[d.events.length - 1].id; addFeed($('alertFeed'), d.events, e => e.type === 'anticheat' || e.type === 'kick' ? 'alert' : 'warn');
+      }
+      const c = await call('/api/console?since=' + consolePos);
+      if (consolePos === 0) $('term').replaceChildren();
+      consolePos = c.pos;
+      const t = $('term'), atBottom = t.scrollHeight - t.scrollTop - t.clientHeight < 60;
+      for (const l of c.lines) t.append(el('div', /\bWARN\b/.test(l) ? 'w' : /\bERROR\b|Exception/.test(l) ? 'e' : null, l));
+      while (t.children.length > 500) t.firstChild.remove();
+      if (atBottom) t.scrollTop = t.scrollHeight;
+    } catch {}
+  }
+
+  // ---------- Moderation ----------
+  const ACTIONS = [['warn', 'Verwarnen', 'mute'], ['mute', 'Muten', 'mute'], ['kick', 'Kicken', 'kick'], ['ban', 'Bannen', 'ban'], ['unmute', 'Entmuten', 'mute'], ['unban', 'Entbannen', 'ban']];
+  let modAction = 'warn';
+  function setAction(a) {
+    modAction = a;
+    document.querySelectorAll('#modActions button').forEach(b => b.classList.toggle('on', b.dataset.a === a));
+    $('durWrap').hidden = !['mute', 'ban'].includes(a);
+    $('reasonWrap').hidden = ['unmute', 'unban'].includes(a);
+    $('modBtnText').textContent = ACTIONS.find(x => x[0] === a)[1];
+    $('modBtn').className = 'btn ' + (['ban', 'kick'].includes(a) ? 'btn-danger' : ['mute', 'warn'].includes(a) ? 'btn-warn' : 'btn-primary');
+  }
+  function buildActions() {
+    $('modActions').replaceChildren(...ACTIONS.map(([a, label, p]) => { const b = el('button', null, label); b.type = 'button'; b.dataset.a = a; b.disabled = !can(p); b.onclick = () => setAction(a); return b; }));
+    const first = ACTIONS.find(x => can(x[2])); if (first) setAction(first[0]);
+  }
+  $('modForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const player = $('modPlayer').value.trim(), reason = $('modReason').value.trim(), duration = $('modDur').value;
+    if (['ban', 'kick'].includes(modAction) && !confirm(`${player} wirklich ${modAction === 'ban' ? (duration ? 'für ' + $('modDur').selectedOptions[0].text + ' bannen' : 'PERMANENT bannen') : 'kicken'}?`)) return;
+    try { toast((await post('/api/moderate', { action: modAction, player, reason, duration })).message); $('modReason').value = ''; loadOverview(); } catch (err) { toast(err.message, true); }
+  });
+
+  // ---------- Strafen ----------
+  const TYPE = { BAN: 'Bann', TEMP_BAN: 'Zeit-Bann', IP_BAN: 'IP-Bann', MUTE: 'Mute', TEMP_MUTE: 'Zeit-Mute', WARNING: 'Verwarnung', TEMP_WARNING: 'Verwarnung', KICK: 'Kick' };
+  let histTimer;
+  async function loadHistory() {
+    try {
+      const q = $('histSearch').value.trim();
+      const d = await call('/api/history' + (q ? '?player=' + encodeURIComponent(q) : ''));
+      $('histRows').replaceChildren(...(d.items.length ? d.items.map(p => {
+        const tr = el('tr'); const t = el('td'); const s = el('span', 'typ ' + p.type, TYPE[p.type] || p.type); t.append(s); if (p.active) t.append(el('span', 'act-tag', '● aktiv'));
+        if (p.end > 0) t.append(el('div', 'muted', 'bis ' + fmtD(p.end)));
+        tr.append(el('td', null, p.name), t, el('td', 'hide-m', p.reason), el('td', 'hide-m muted', p.operator), el('td', 'muted', fmtD(p.start))); return tr;
+      }) : [(() => { const tr = el('tr'); const td = el('td', 'muted', 'Keine Strafen gefunden.'); td.colSpan = 5; tr.append(td); return tr; })()]));
+    } catch (err) { toast(err.message, true); }
+  }
+  $('histSearch').oninput = () => { clearTimeout(histTimer); histTimer = setTimeout(loadHistory, 350); };
+
+  // ---------- Notizen ----------
+  let noteTimer;
+  async function loadNotes() {
+    try {
+      const q = $('noteSearch').value.trim();
+      const d = await call('/api/notes' + (q ? '?player=' + encodeURIComponent(q) : ''));
+      $('noteList').replaceChildren(...(d.items.length ? d.items.slice().reverse().map(n => { const c = el('div', 'note'); const h = el('div', 'h'); h.append(el('b', null, n.player || q), el('span', null, `· ${n.user} · ${fmtD(n.t)}`)); c.append(h, el('div', null, n.text)); return c; }) : [el('div', 'empty', 'Keine Notizen.')]));
+    } catch (err) { toast(err.message, true); }
+  }
+  $('noteSearch').oninput = () => { clearTimeout(noteTimer); noteTimer = setTimeout(loadNotes, 350); };
+  $('noteForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    try { toast((await post('/api/notes', { player: $('notePlayer').value.trim(), text: $('noteText').value })).message); $('noteText').value = ''; $('noteSearch').value = $('notePlayer').value.trim(); loadNotes(); } catch (err) { toast(err.message, true); }
+  });
+
+  // ---------- Ankündigung ----------
+  $('annForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    if (!confirm('Ankündigung an ALLE Spieler senden?')) return;
+    try { toast((await post('/api/announce', { message: $('annText').value, title: $('annTitle').checked })).message); $('annText').value = ''; } catch (err) { toast(err.message, true); }
+  });
+
+  // ---------- Spieler-Akte ----------
+  async function openAkte(name) {
+    go('lookup'); $('lookupInput').value = name;
+    const box = $('akte'); box.replaceChildren(el('div', 'card empty', 'Lade Akte …'));
+    try {
+      const d = await call('/api/lookup?player=' + encodeURIComponent(name));
+      const p = d.profile || {}, card = el('div', 'card');
+      const hd = el('div', 'akte-head'); const img = el('img'); img.alt = d.player;
+      img.src = `https://mc-heads.net/body/${encodeURIComponent(p.bedrock ? 'MHF_Steve' : d.player)}/150`;
+      const info = el('div'); info.style.flex = '1'; const h3 = el('h3', null, d.player);
+      h3.append(el('span', 'pill ' + (d.online ? 'on' : 'off'), d.online ? 'ONLINE' : 'offline'));
+      if (d.activeCount) h3.append(el('span', 'pill bad', d.activeCount + ' aktive Strafe' + (d.activeCount > 1 ? 'n' : '')));
+      if (d.online) { const rk = el('span', 'rank', d.online.rank); rk.style.color = d.online.rankColor; h3.append(rk); }
+      const meta = el('div', 'muted', p.firstJoin ? `Dabei seit ${new Date(p.firstJoin).toLocaleDateString('de-DE')} · zuletzt ${p.lastSeen ? fmtD(p.lastSeen) : '–'}${d.online ? ' · gerade in ' + d.online.world : ''}` : 'Noch nie auf dem Server gesehen (oder Profil noch nicht geladen).');
+      const kv = el('div', 'kv');
+      [['Spielzeit', p.hours != null ? p.hours + ' h' : '–'], ['Strafen', d.punishments.length], ['Kills / Tode', p.kills != null ? `${p.kills} / ${p.deaths}` : '–'], ['Geld', p.money != null ? p.money.toLocaleString('de-DE') + ' $' : '–']]
+        .forEach(([k, v]) => { const c = el('div'); c.append(el('b', null, String(v)), el('span', null, k)); kv.append(c); });
+      info.append(h3, meta, kv); hd.append(img, info, actionButtons(d.player)); card.append(hd);
+      const hist = el('div', 'card'); hist.append(el('div', 'card-h', 'Strafen'));
+      if (!d.punishments.length) hist.append(el('div', 'empty', 'Keine Strafen – sauber!'));
+      else { const tb = el('table'); const body = el('tbody'); d.punishments.forEach(x => { const tr = el('tr'); const t = el('td'); t.append(el('span', 'typ ' + x.type, TYPE[x.type] || x.type)); if (x.active) t.append(el('span', 'act-tag', '● aktiv')); tr.append(t, el('td', null, x.reason), el('td', 'muted', fmtD(x.start))); body.append(tr); }); tb.append(body); hist.append(tb); }
+      const notes = el('div', 'card'); notes.append(el('div', 'card-h', 'Team-Notizen'));
+      if (!d.notes.length) notes.append(el('div', 'empty', 'Keine Notizen.'));
+      d.notes.slice().reverse().forEach(n => { const c = el('div', 'note'); const h = el('div', 'h'); h.append(el('b', null, n.user), el('span', null, fmtD(n.t))); c.append(h, el('div', null, n.text)); notes.append(c); });
+      box.replaceChildren(card, hist, notes); box.style.display = 'flex'; box.style.flexDirection = 'column'; box.style.gap = '14px';
+    } catch (err) { box.replaceChildren(el('div', 'card empty', err.message)); }
+  }
+  $('lookupForm').addEventListener('submit', e => { e.preventDefault(); const n = $('lookupInput').value.trim(); if (n) openAkte(n); });
+
+  // ---------- Team-Chat ----------
+  let tcSince = 0, tcUnseen = 0;
+  async function pollTeamchat() {
+    if (!can('teamchat')) return;
+    try {
+      const d = await call('/api/teamchat?since=' + tcSince); if (!d.messages.length) return;
+      const box = $('tcFeed'); if (box.querySelector('.empty')) box.replaceChildren();
+      const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 60;
+      for (const m of d.messages) {
+        const row = el('div', 'tcmsg' + (m.user === me.name ? ' mine' : '')); row.append(el('div', 'av', m.user[0].toUpperCase()));
+        const c = el('div'); const h = el('div', 'h'); h.append(el('b', null, m.user), fmtD(m.t)); c.append(h, el('div', null, m.text)); row.append(c); box.append(row);
+        if (tcSince && view !== 'teamchat' && m.user !== me.name) { tcUnseen++; $('tcBadge').textContent = tcUnseen; $('tcBadge').hidden = false; }
+      }
+      tcSince = d.messages[d.messages.length - 1].id;
+      if (atBottom || view !== 'teamchat') box.scrollTop = box.scrollHeight;
+    } catch {}
+  }
+  $('tcForm').addEventListener('submit', async e => {
+    e.preventDefault(); const msg = $('tcInput').value.trim(); if (!msg) return;
+    try { await post('/api/teamchat', { message: msg }); $('tcInput').value = ''; pollTeamchat(); } catch (err) { toast(err.message, true); }
+  });
+
+  // ---------- Statistik ----------
+  async function loadStats() {
+    try {
+      const d = await call('/api/stats');
+      $('stToday').textContent = d.today; $('stWeek').textContent = d.week;
+      $('stTop').textContent = d.team[0] ? d.team[0].name : '–';
+      $('stTotal').textContent = d.team.reduce((a, x) => a + x.total, 0);
+      $('statRows').replaceChildren(...(d.team.length ? d.team.map((x, i) => { const tr = el('tr'); tr.append(el('td', null, ['🥇', '🥈', '🥉'][i] || String(i + 1)), el('td', null, x.name), el('td', null, String(x.total)), el('td', null, String(x.week)), el('td', 'hide-m', String(x.bans)), el('td', 'hide-m', String(x.mutes)), el('td', 'hide-m', String(x.warns))); return tr; })
+        : [(() => { const tr = el('tr'); const td = el('td', 'muted', 'Noch keine Strafen.'); td.colSpan = 7; tr.append(td); return tr; })()]));
+    } catch (err) { toast(err.message, true); }
+  }
+
+  // ---------- Strafenkatalog ----------
+  const CATALOG = [
+    ['Beleidigung', 'mute', '1h'], ['Spam', 'mute', '30m'], ['Werbung', 'ban', '7d'], ['Unangemessener Name/Skin', 'kick', ''],
+    ['Griefing', 'ban', '7d'], ['Bug-Using', 'ban', '3d'], ['Hacking / Cheat-Client', 'ban', ''], ['Respektloses Verhalten', 'warn', '']];
+  function buildCatalog() {
+    const perm = a => a === 'kick' ? 'kick' : a === 'ban' ? 'ban' : 'mute';
+    $('catalog').replaceChildren(...CATALOG.map(([reason, a, dur]) => {
+      const b = el('button', 'cat', `${reason} → ${({ mute: 'Mute', ban: 'Bann', kick: 'Kick', warn: 'Warn' })[a]}${dur ? ' ' + dur : a === 'ban' ? ' ∞' : ''}`);
+      b.type = 'button'; b.disabled = !can(perm(a));
+      b.onclick = () => { setAction(a); $('modReason').value = reason; $('modDur').value = dur; if (!$('modPlayer').value) $('modPlayer').focus(); };
+      return b;
+    }));
+  }
+
+  // ---------- Keys (nur Owner) ----------
+  let permNames = {}, ranks = [], editUser = null;
+  const PRESETS = { Admin: ['chat', 'alerts', 'kick', 'mute', 'ban', 'history', 'notes', 'announce', 'lookup', 'teamchat'], Developer: ['chat', 'alerts', 'history', 'notes', 'lookup', 'teamchat'], Moderator: ['chat', 'alerts', 'kick', 'mute', 'ban', 'history', 'notes', 'lookup', 'teamchat'], Supporter: ['chat', 'alerts', 'kick', 'mute', 'history', 'notes', 'lookup', 'teamchat'], Builder: ['chat', 'notes', 'teamchat'] };
+  const SHORT = { chat: 'Chat', alerts: 'Meldungen', kick: 'Kick', mute: 'Mute/Warn', ban: 'Bann', history: 'Strafen', notes: 'Notizen', announce: 'Ankündigung', lookup: 'Akte', teamchat: 'Team-Chat' };
+  function permBoxes(box, sel) { box.replaceChildren(...Object.entries(permNames).map(([k, l]) => { const lab = el('label', 'perm'); const c = el('input'); c.type = 'checkbox'; c.value = k; c.checked = sel.includes(k); lab.append(c, el('span', null, l)); return lab; })); }
+  const checked = box => [...box.querySelectorAll('input:checked')].map(c => c.value);
+  function rankOptions(sel, val) { sel.replaceChildren(...ranks.map(r => { const o = el('option', null, r); o.value = r; o.selected = r === val; return o; })); }
+  async function loadKeys() {
+    try {
+      const d = await call('/api/keys'); permNames = d.permNames; ranks = d.ranks;
+      if (!$('newPerms').children.length) {
+        rankOptions($('keyRank'), 'Supporter'); permBoxes($('newPerms'), PRESETS.Supporter);
+        $('presets').replaceChildren(el('span', 'muted', 'Vorlage:'), ...Object.keys(PRESETS).map(r => { const b = el('button', null, r); b.type = 'button'; b.onclick = () => { permBoxes($('newPerms'), PRESETS[r]); $('keyRank').value = r; }; return b; }));
+        $('keyRank').onchange = () => permBoxes($('newPerms'), PRESETS[$('keyRank').value] || []);
+      }
+      $('keyRows').replaceChildren(...d.users.map(u => {
+        const tr = el('tr'); const n = el('td'); n.append(el('b', null, u.name + (u.id === d.me ? ' (du)' : '')));
+        const r = el('td'); r.append(el('span', 'rank', u.rank || (u.role === 'owner' ? 'Owner' : ''))); const tags = el('div', 'ptags');
+        if (u.role === 'owner') tags.append(el('span', 'ptag', 'alle Rechte + Keys')); else if (!u.perms.length) tags.append(el('span', 'ptag', 'nur Übersicht')); else u.perms.forEach(p => tags.append(el('span', 'ptag', SHORT[p] || p)));
+        r.append(tags);
+        const acts = el('div', 'acts');
+        const btn = (ic, title, fn, red) => { const b = el('button', 'ib' + (red ? ' red' : '')); b.type = 'button'; b.title = title; b.setAttribute('aria-label', title); b.append(icon(ic)); b.onclick = fn; acts.append(b); };
+        if (u.role !== 'owner') btn('key', 'Rechte bearbeiten', () => { editUser = u; $('editFor').textContent = u.name; rankOptions($('editRank'), u.rank); permBoxes($('editPerms'), u.perms); $('editBox').hidden = false; });
+        btn('refresh', 'Neuen Key erzeugen', async () => { if (!confirm(`Neuen Key für ${u.name}? Der alte funktioniert dann nicht mehr.`)) return; try { showCode(u.name, (await post('/api/keys/reset', { id: u.id })).code); } catch (err) { toast(err.message, true); } });
+        if (u.id !== d.me) btn('trash', 'Key löschen', async () => { if (!confirm(`Key von ${u.name} löschen? Er wird sofort abgemeldet.`)) return; try { toast((await post('/api/keys/delete', { id: u.id })).message); loadKeys(); } catch (err) { toast(err.message, true); } }, true);
+        const t4 = el('td'); t4.append(acts);
+        tr.append(n, r, el('td', 'muted hide-m', u.lastLogin ? fmtD(u.lastLogin) : 'noch nie'), t4); return tr;
+      }));
+    } catch (err) { toast(err.message, true); }
+  }
+  function showCode(name, code) { $('codeFor').textContent = name; $('codeVal').textContent = code; $('codeBox').hidden = false; }
+  $('codeOk').onclick = () => { $('codeBox').hidden = true; $('codeVal').textContent = ''; };
+  $('codeCopy').onclick = async () => { try { await navigator.clipboard.writeText($('codeVal').textContent); toast('Key kopiert'); } catch { toast('Bitte Key markieren und kopieren', true); } };
+  $('editCancel').onclick = () => { $('editBox').hidden = true; };
+  $('editSave').onclick = async () => { try { toast((await post('/api/keys/update', { id: editUser.id, perms: checked($('editPerms')), rank: $('editRank').value })).message); $('editBox').hidden = true; loadKeys(); } catch (err) { toast(err.message, true); } };
+  $('keyForm').addEventListener('submit', async e => {
+    e.preventDefault(); const name = $('keyName').value.trim();
+    try { const d = await post('/api/keys/create', { name, rank: $('keyRank').value, perms: checked($('newPerms')) }); $('keyName').value = ''; showCode(name, d.code); loadKeys(); } catch (err) { toast(err.message, true); }
+  });
+
+  // ---------- Start ----------
+  async function start() {
+    me = await call('/api/me'); perms = new Set(me.perms);
+    $('meName').textContent = me.name; $('meRank').textContent = me.rank || (me.role === 'owner' ? 'Owner' : 'Team'); $('meAv').textContent = me.name[0].toUpperCase();
+    document.querySelectorAll('#nav button[data-perm]').forEach(b => b.hidden = !can(b.dataset.perm));
+    buildActions(); buildCatalog();
+    $('loginView').hidden = true; $('appView').hidden = false;
+    loadOverview(); pollChat(); pollAlerts(); pollTeamchat();
+    go((location.hash || '#overview').slice(1));
+  }
+  setInterval(() => { if (token && me) loadOverview(); }, 5000);
+  setInterval(() => { if (token && me) pollChat(); }, 3000);
+  setInterval(() => { if (token && me) pollAlerts(); }, 4000);
+  setInterval(() => { if (token && me) pollTeamchat(); }, 3000);
+  discover().then(ok => { if (ok && token) start().catch(() => logout(true)); });
+})();
+</script>
+</body>
+</html>
